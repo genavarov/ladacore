@@ -71,7 +71,7 @@ static Checkpoints::MapCheckpoints mapCheckpoints =
         ( 8400, uint256("0x702528b55f744f690d896095c4ca8642ccf5f6b420a37b5c6db303013b982d24"))
         ( 12700, uint256("0xb4840c996402136af7e71c19bbad1431b88e0bce56716aa3d9a6eb9f09f73ac2"))
         ( 16800, uint256("0x3229d32141164b7a1d3d82a606fccf096bdf046f4612b9b57d4096f2dfebce98"))
-		( 17300, uint256("0x51d6766e909baff8809fa85f7be393b31c91ce0724af93de8d3539662c80078b"))
+        ( 17300, uint256("0x51d6766e909baff8809fa85f7be393b31c91ce0724af93de8d3539662c80078b"))
         ( 24200, uint256("0x14d1fd1500db0485569c1b0957e19dc4d2fedf7d3dab43795a8974ca049c876b"))
         ;
 static const Checkpoints::CCheckpointData data = {
@@ -97,7 +97,7 @@ static Checkpoints::MapCheckpoints mapCheckpointsTestnet =
         ( 8400, uint256("0x702528b55f744f690d896095c4ca8642ccf5f6b420a37b5c6db303013b982d24"))
         ( 12700, uint256("0xb4840c996402136af7e71c19bbad1431b88e0bce56716aa3d9a6eb9f09f73ac2"))
         ( 16800, uint256("0x3229d32141164b7a1d3d82a606fccf096bdf046f4612b9b57d4096f2dfebce98"))
-		( 17300, uint256("0x51d6766e909baff8809fa85f7be393b31c91ce0724af93de8d3539662c80078b"))		
+        ( 17300, uint256("0x51d6766e909baff8809fa85f7be393b31c91ce0724af93de8d3539662c80078b"))		
         ;
 static const Checkpoints::CCheckpointData dataTestnet = {
         &mapCheckpointsTestnet,
@@ -140,7 +140,7 @@ public:
         nToCheckBlockUpgradeMajority = 1000;
         nMinerThreads = 0;
         nTargetTimespan = 3.5 * 24 * 60 * 60; // 3.5 days
-		nTargetTimespanx = 10 * 60; // 10 minutes
+        nTargetTimespanx = 10 * 60; // 10 minutes
         nTargetSpacing = 2.5 * 60; // 2.5 minutes
         nMaxTipAge = 24 * 60 * 60;
 
@@ -235,8 +235,8 @@ public:
         nMinerThreads = 0;
         nTargetTimespan = 3.5 * 24 * 60 * 60; // 3.5 days
         nTargetSpacing = 2.5 * 60; // 2.5 minutes
-		nTargetTimespanx = 10 * 60; // 10 minutes
-		nMaxTipAge = 24 * 60 * 60;
+        nTargetTimespanx = 10 * 60; // 10 minutes
+        nMaxTipAge = 24 * 60 * 60;
         //nMaxTipAge = 0x7fffffff;
 
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
@@ -304,7 +304,7 @@ public:
         nToCheckBlockUpgradeMajority = 1000;
         nMinerThreads = 1;
         nTargetTimespan = 3.5 * 24 * 60 * 60; // 3.5 days
-		nTargetTimespanx = 10 * 60; // 10 minutes
+        nTargetTimespanx = 10 * 60; // 10 minutes
         nTargetSpacing = 2.5 * 60; // 2.5 minutes
         bnProofOfWorkLimit = ~uint256(0) >> 1;
         nMaxTipAge = 24 * 60 * 60;
