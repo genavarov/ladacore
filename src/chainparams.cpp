@@ -235,6 +235,7 @@ public:
         nMinerThreads = 0;
         nTargetTimespan = 3.5 * 24 * 60 * 60; // 3.5 days
         nTargetSpacing = 2.5 * 60; // 2.5 minutes
+		nTargetTimespanx = 10 * 60; // 10 minutes
 		nMaxTipAge = 24 * 60 * 60;
         //nMaxTipAge = 0x7fffffff;
 
@@ -303,6 +304,7 @@ public:
         nToCheckBlockUpgradeMajority = 1000;
         nMinerThreads = 1;
         nTargetTimespan = 3.5 * 24 * 60 * 60; // 3.5 days
+		nTargetTimespanx = 10 * 60; // 10 minutes
         nTargetSpacing = 2.5 * 60; // 2.5 minutes
         bnProofOfWorkLimit = ~uint256(0) >> 1;
         nMaxTipAge = 24 * 60 * 60;
