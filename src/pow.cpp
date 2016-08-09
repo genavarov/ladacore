@@ -173,7 +173,7 @@ unsigned int GetNextWorkRequiredx(const CBlockIndex* pindexLast, const CBlockHea
         bnNew = Params().ProofOfWorkLimit();
 
     /// debug print
-    LogPrintf("GetNextWorkRequired RETARGET\n");
+    LogPrintf("GetNextWorkRequired eX RETARGET\n");
     LogPrintf("Params().TargetTimespanx() = %d    nActualTimespan = %d\n", Params().TargetTimespanx(), nActualTimespan);
     LogPrintf("Before: %08x  %s\n", pindexLast->nBits, bnOld.ToString());
     LogPrintf("After:  %08x  %s\n", bnNew.GetCompact(), bnNew.ToString());
