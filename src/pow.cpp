@@ -66,37 +66,14 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         nActualTimespan = Params().TargetTimespan()/4;
     if (nActualTimespan > Params().TargetTimespan()*4)
         nActualTimespan = Params().TargetTimespan()*4;
-
-    // Retarget
-    uint256 bnNew;
-    uint256 bnOld;
-    bnNew.SetCompact(pindexLast->nBits);
-    bnOld = bnNew;
-    // Ladacoin: intermediate uint256 can overflow by 1 bit
-    bool fShift = bnNew.bits() > 235;
-    if (fShift)
-        bnNew >>= 1;
-    bnNew *= nActualTimespan;
-    bnNew /= Params().TargetTimespan();
-    if (fShift)
-        bnNew <<= 1;
-
-    if (bnNew > Params().ProofOfWorkLimit())
-        bnNew = Params().ProofOfWorkLimit();
-
-    /// debug print
-    LogPrintf("GetNextWorkRequired RETARGET\n");
-    LogPrintf("Params().TargetTimespan() = %d    nActualTimespan = %d\n", Params().TargetTimespan(), nActualTimespan);
-    LogPrintf("Before: %08x  %s\n", pindexLast->nBits, bnOld.ToString());
-    LogPrintf("After:  %08x  %s\n", bnNew.GetCompact(), bnNew.ToString());
 	
-    }
-    else
-    { //New non Standard retargeting x
+	}
+	else
+	{ //New non Standard retargeting x
 		//int64_t nParamsTargetTimespan = Params().TargetTimespanx();
 		//int64_t nParamsInterval = Params().Intervalx();
 		
-    // Only change once per interval
+	// Only change once per interval
     if ((pindexLast->nHeight+1) % Params().Intervalx() != 0)
     {
         if (Params().AllowMinDifficultyBlocks())
@@ -137,12 +114,44 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         nActualTimespan = Params().TargetTimespanx()/4;
     if (nActualTimespan > Params().TargetTimespanx()*4)
         nActualTimespan = Params().TargetTimespanx()*4;
+	
+	}
 
     // Retarget
     uint256 bnNew;
     uint256 bnOld;
     bnNew.SetCompact(pindexLast->nBits);
     bnOld = bnNew;
+	
+	// Standard retargeting for the first blocks
+    if (pindexLast->nHeight+1 < 28000) // Ladacoin: 30000
+    {
+        //int64_t nParamsTargetTimespan = Params().TargetTimespan();
+		//int64_t nParamsInterval = Params().Interval();		
+    // Ladacoin: intermediate uint256 can overflow by 1 bit
+    bool fShift = bnNew.bits() > 235;
+    if (fShift)
+        bnNew >>= 1;
+    bnNew *= nActualTimespan;
+    bnNew /= Params().TargetTimespan();
+    if (fShift)
+        bnNew <<= 1;
+
+    if (bnNew > Params().ProofOfWorkLimit())
+        bnNew = Params().ProofOfWorkLimit();
+
+    /// debug print
+    LogPrintf("GetNextWorkRequired RETARGET\n");
+    LogPrintf("Params().TargetTimespan() = %d    nActualTimespan = %d\n", Params().TargetTimespan(), nActualTimespan);
+    LogPrintf("Before: %08x  %s\n", pindexLast->nBits, bnOld.ToString());
+    LogPrintf("After:  %08x  %s\n", bnNew.GetCompact(), bnNew.ToString());
+	
+    }
+    else
+    { //New non Standard retargeting x
+		//int64_t nParamsTargetTimespan = Params().TargetTimespanx();
+		//int64_t nParamsInterval = Params().Intervalx();
+		
     // Ladacoin: intermediate uint256 can overflow by 1 bit
     bool fShift = bnNew.bits() > 235;
     if (fShift)
