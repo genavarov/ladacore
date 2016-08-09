@@ -20,13 +20,19 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         return nProofOfWorkLimit;
     
 	// Standard retargeting for the first blocks
-    if (pindexLast->nHeight+1 < 28000) // Ladacoin: 30000
+    if (pindexLast->nHeight+1 < 28200) // Ladacoin: 30000
     {
-        //int64_t nParamsTargetTimespan = Params().TargetTimespan();
-		//int64_t nParamsInterval = Params().Interval();
+        int64_t nParamsTargetTimespan = Params().TargetTimespan();
+		int64_t nParamsInterval = Params().Interval();
+    }
+    else
+    { //New non Standard retargeting x
+		int64_t nParamsTargetTimespan = Params().TargetTimespanx();
+		int64_t nParamsInterval = Params().Intervalx();
+    }
 	
-	// Only change once per interval
-    if ((pindexLast->nHeight+1) % Params().Interval() != 0)
+    // Only change once per interval
+    if ((pindexLast->nHeight+1) % nParamsInterval != 0)
     {
         if (Params().AllowMinDifficultyBlocks())
         {
@@ -39,7 +45,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
             {
                 // Return the last non-special-min-difficulty-rules-block
                 const CBlockIndex* pindex = pindexLast;
-                while (pindex->pprev && pindex->nHeight % Params().Interval() != 0 && pindex->nBits == nProofOfWorkLimit)
+                while (pindex->pprev && pindex->nHeight % nParamsInterval != 0 && pindex->nBits == nProofOfWorkLimit)
                     pindex = pindex->pprev;
                 return pindex->nBits;
             }
@@ -49,9 +55,9 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
 
     // Ladacoin: This fixes an issue where a 51% attack can change difficulty at will.
     // Go back the full period unless it's the first retarget after genesis. Code courtesy of Art Forz
-    int blockstogoback = Params().Interval()-1;
-    if ((pindexLast->nHeight+1) != Params().Interval())
-        blockstogoback = Params().Interval();
+    int blockstogoback = nParamsInterval-1;
+    if ((pindexLast->nHeight+1) != nParamsInterval)
+        blockstogoback = nParamsInterval;
 
     // Go back by what we want to be 14 days worth of blocks
     const CBlockIndex* pindexFirst = pindexLast;
@@ -62,78 +68,22 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     // Limit adjustment step
     int64_t nActualTimespan = pindexLast->GetBlockTime() - pindexFirst->GetBlockTime();
     LogPrintf("  nActualTimespan = %d  before bounds\n", nActualTimespan);
-    if (nActualTimespan < Params().TargetTimespan()/4)
-        nActualTimespan = Params().TargetTimespan()/4;
-    if (nActualTimespan > Params().TargetTimespan()*4)
-        nActualTimespan = Params().TargetTimespan()*4;
-	
-	}
-	else
-	{ //New non Standard retargeting x
-		//int64_t nParamsTargetTimespan = Params().TargetTimespanx();
-		//int64_t nParamsInterval = Params().Intervalx();
-		
-	// Only change once per interval
-    if ((pindexLast->nHeight+1) % Params().Intervalx() != 0)
-    {
-        if (Params().AllowMinDifficultyBlocks())
-        {
-            // Special difficulty rule for testnet:
-            // If the new block's timestamp is more than 2* 10 minutes
-            // then allow mining of a min-difficulty block.
-            if (pblock->GetBlockTime() > pindexLast->GetBlockTime() + Params().TargetSpacing()*2)
-                return nProofOfWorkLimit;
-            else
-            {
-                // Return the last non-special-min-difficulty-rules-block
-                const CBlockIndex* pindex = pindexLast;
-                while (pindex->pprev && pindex->nHeight % Params().Intervalx() != 0 && pindex->nBits == nProofOfWorkLimit)
-                    pindex = pindex->pprev;
-                return pindex->nBits;
-            }
-        }
-        return pindexLast->nBits;
-    }
-
-    // Ladacoin: This fixes an issue where a 51% attack can change difficulty at will.
-    // Go back the full period unless it's the first retarget after genesis. Code courtesy of Art Forz
-    int blockstogoback = Params().Intervalx()-1;
-    if ((pindexLast->nHeight+1) != Params().Intervalx())
-        blockstogoback = Params().Intervalx();
-
-    // Go back by what we want to be 14 days worth of blocks
-    const CBlockIndex* pindexFirst = pindexLast;
-    for (int i = 0; pindexFirst && i < blockstogoback; i++)
-        pindexFirst = pindexFirst->pprev;
-    assert(pindexFirst);
-
-    // Limit adjustment step
-    int64_t nActualTimespan = pindexLast->GetBlockTime() - pindexFirst->GetBlockTime();
-    LogPrintf("  nActualTimespan = %d  before bounds\n", nActualTimespan);
-    if (nActualTimespan < Params().TargetTimespanx()/4)
-        nActualTimespan = Params().TargetTimespanx()/4;
-    if (nActualTimespan > Params().TargetTimespanx()*4)
-        nActualTimespan = Params().TargetTimespanx()*4;
-	
-	}
+    if (nActualTimespan < nParamsTargetTimespan/4)
+        nActualTimespan = nParamsTargetTimespan/4;
+    if (nActualTimespan > nParamsTargetTimespan*4)
+        nActualTimespan = nParamsTargetTimespan*4;
 
     // Retarget
     uint256 bnNew;
     uint256 bnOld;
     bnNew.SetCompact(pindexLast->nBits);
     bnOld = bnNew;
-	
-	// Standard retargeting for the first blocks
-    if (pindexLast->nHeight+1 < 28000) // Ladacoin: 30000
-    {
-        //int64_t nParamsTargetTimespan = Params().TargetTimespan();
-		//int64_t nParamsInterval = Params().Interval();		
     // Ladacoin: intermediate uint256 can overflow by 1 bit
     bool fShift = bnNew.bits() > 235;
     if (fShift)
         bnNew >>= 1;
     bnNew *= nActualTimespan;
-    bnNew /= Params().TargetTimespan();
+    bnNew /= nParamsTargetTimespan;
     if (fShift)
         bnNew <<= 1;
 
@@ -142,35 +92,9 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
 
     /// debug print
     LogPrintf("GetNextWorkRequired RETARGET\n");
-    LogPrintf("Params().TargetTimespan() = %d    nActualTimespan = %d\n", Params().TargetTimespan(), nActualTimespan);
+    LogPrintf("nParamsTargetTimespan = %d    nActualTimespan = %d\n", nParamsTargetTimespan, nActualTimespan);
     LogPrintf("Before: %08x  %s\n", pindexLast->nBits, bnOld.ToString());
     LogPrintf("After:  %08x  %s\n", bnNew.GetCompact(), bnNew.ToString());
-	
-    }
-    else
-    { //New non Standard retargeting x
-		//int64_t nParamsTargetTimespan = Params().TargetTimespanx();
-		//int64_t nParamsInterval = Params().Intervalx();
-		
-    // Ladacoin: intermediate uint256 can overflow by 1 bit
-    bool fShift = bnNew.bits() > 235;
-    if (fShift)
-        bnNew >>= 1;
-    bnNew *= nActualTimespan;
-    bnNew /= Params().TargetTimespanx();
-    if (fShift)
-        bnNew <<= 1;
-
-    if (bnNew > Params().ProofOfWorkLimit())
-        bnNew = Params().ProofOfWorkLimit();
-
-    /// debug print
-    LogPrintf("GetNextWorkRequired X RETARGET\n");
-    LogPrintf("Params().TargetTimespanx() = %d    nActualTimespan = %d\n", Params().TargetTimespanx(), nActualTimespan);
-    LogPrintf("Before: %08x  %s\n", pindexLast->nBits, bnOld.ToString());
-    LogPrintf("After:  %08x  %s\n", bnNew.GetCompact(), bnNew.ToString());
-	
-	}
 
     return bnNew.GetCompact();
 }
